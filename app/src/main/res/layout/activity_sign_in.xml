@@ -1,81 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center"
     android:background="#FFFFFF">
 
-
-    <Button
-        android:id="@+id/btnSignIn"
-        android:layout_width="412dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/EnterPassword"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="87dp"
-        android:layout_marginEnd="-1dp"
-        android:backgroundTint="#000000"
-        android:padding="10dp"
-        android:text="Next"
-        android:textColor="#FFFFFF"
-        />
-
-    <EditText
-        android:id="@+id/EnterPassword"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_below="@id/EnterEmail"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_centerInParent="true"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="31dp"
-        android:layout_marginEnd="2dp"
-        android:background="#7E817F7F"
-        android:hint="Enter Password"
-        android:inputType="textPassword"
-        android:padding="10dp" />
-
-
-    <EditText
-        android:id="@+id/EnterEmail"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="200dp"
-        android:layout_marginEnd="-7dp"
-        android:background="#7E817F7F"
-        android:hint="Enter Email Address"
-        android:padding="10dp"
-        android:visibility="visible" />
-
+    <!-- Title -->
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="198dp"
-        android:layout_height="63dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
-        android:layout_marginEnd="107dp"
-        android:fontFamily="sans-serif-medium"
-        android:text="Sign In"
-        android:textAlignment="center"
-        android:textColor="#050404"
-        android:textSize="34sp" />
-
-    <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/signInTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        app:srcCompat="@android:drawable/btn_dialog"
-        app:tint="#000000" />
+        android:text="Sign In"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp"
+        android:gravity="center"
+        android:textColor="#000000" />
 
-</RelativeLayout>
+    <!-- Email Input Field -->
+    <EditText
+        android:id="@+id/emailEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Email Address"
+        android:inputType="textEmailAddress"
+        android:layout_marginBottom="16dp"
+        android:padding="12dp"
+        android:background="@drawable/edit_text_background" />
+
+    <!-- Password Input Field -->
+    <EditText
+        android:id="@+id/passwordEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:layout_marginBottom="32dp"
+        android:padding="12dp"
+        android:background="@drawable/edit_text_background" />
+
+    <!-- Sign-In Button -->
+    <Button
+        android:id="@+id/signInButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sign In"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#050A11"
+        android:padding="12dp" />
+
+</LinearLayout>

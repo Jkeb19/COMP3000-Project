@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.seedguard" />
+                  <option name="mobileSdkAppId" value="1:907858643217:android:e63e95306962b03aa4e4b0" />
+                  <option name="projectId" value="seed-guard" />
+                  <option name="projectNumber" value="907858643217" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

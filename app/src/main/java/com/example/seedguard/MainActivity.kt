@@ -4,10 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Patterns
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : ComponentActivity() {
 
@@ -19,11 +21,15 @@ class MainActivity : ComponentActivity() {
 
         sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
 
+        val db = FirebaseFirestore.getInstance()
+
+
         val nameField = findViewById<EditText>(R.id.editTextName)
         val emailField = findViewById<EditText>(R.id.editTextEmailAddress)
         val passwordField = findViewById<EditText>(R.id.editTextPassword)
         val confirmPasswordField = findViewById<EditText>(R.id.editTextConfirmPassword)
         val btnSignUp = findViewById<Button>(R.id.btnSignUp)
+        val btnSignIn =findViewById<Button>(R.id.btnSignIn)
         val btnForgotPass = findViewById<Button>(R.id.btnForgotPW)
 
         btnSignUp.setOnClickListener {
@@ -36,12 +42,21 @@ class MainActivity : ComponentActivity() {
                 Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show()
             } else if (password != confirmPassword) {
                 Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
+
+            } else if (!isValidEmail(email)) {
+                Toast.makeText(this, "Please enter a valid email address", Toast.LENGTH_SHORT).show()
+
             } else {
                 saveCredentials(name, email, password)
                 val intent = Intent(this, MainMenu::class.java)
                 startActivity(intent)
             }
         }
+        btnSignIn.setOnClickListener {
+            val intent = Intent(this, SignInActivity::class.java)
+            startActivity(intent)
+        }
+
         btnForgotPass.setOnClickListener {  }
 
         autoFillCredentials()
@@ -55,6 +70,10 @@ class MainActivity : ComponentActivity() {
         editor.apply()
 
         Toast.makeText(this, "User details saved successfully!", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun isValidEmail(email: String): Boolean {
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
     private fun autoFillCredentials() {

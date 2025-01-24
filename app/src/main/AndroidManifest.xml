@@ -31,6 +31,12 @@
             android:theme="@style/Theme.SeedGuard"/>
 
         <activity
+            android:name=".SignInActivity"
+            android:exported="true"
+            android:label="Sign In"
+            android:theme="@style/Theme.SeedGuard"/>
+
+        <activity
             android:name=".SeedPhraseActivity"
             android:exported="true"
             android:label="Seed Phrase Entry"
