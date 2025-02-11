@@ -1,41 +1,48 @@
-package com.example.seedguard
-
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
+import com.example.seedguard.R
 
-class seedphraseadapter (private val seedPhraseCount: Int) :
-    RecyclerView.Adapter<seedphraseadapter.ViewHolder>() {
+class seedphraseadapter(private val itemCount: Int) : RecyclerView.Adapter<seedphraseadapter.SeedPhraseViewHolder>() {
 
-    private val seedPhrases: MutableList<String> = MutableList(seedPhraseCount) { "" }
+    private val seedPhrases = MutableList(itemCount) { "" } // Initialize the list with empty strings
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val seedPhraseInput: EditText = itemView.findViewById(R.id.seedPhraseEditText)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SeedPhraseViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.activity_seed_phrase, parent, false)
-        return ViewHolder(view)
+        return SeedPhraseViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.seedPhraseInput.hint = "Word ${position + 1}" // Set hint as "Word 1", "Word 2", etc.
-
-        holder.seedPhraseInput.setText(seedPhrases[position])
-
-        holder.seedPhraseInput.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) {
-                seedPhrases[position] = holder.seedPhraseInput.text.toString()
-            }
-        }
+    override fun onBindViewHolder(holder: SeedPhraseViewHolder, position: Int) {
+        holder.bind(position)
     }
 
-    override fun getItemCount(): Int = seedPhraseCount
+    override fun getItemCount(): Int = itemCount
 
     fun getSeedPhrases(): List<String> {
+        // Return the captured seed phrases
         return seedPhrases
+    }
+
+    inner class SeedPhraseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val editText: EditText = itemView.findViewById(R.id.seedPhraseEditText)
+
+        fun bind(position: Int) {
+            editText.setText(seedPhrases[position]) // Populate the EditText if already filled
+
+            // Listen for text changes and update the list
+            editText.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    seedPhrases[position] = s.toString().trim()
+                }
+
+                override fun afterTextChanged(s: Editable?) {}
+            })
+        }
     }
 }
