@@ -7,7 +7,6 @@
     android:gravity="center"
     android:background="#FFFFFF">
 
-    <!-- Title -->
     <TextView
         android:id="@+id/signInTitle"
         android:layout_width="wrap_content"
@@ -19,7 +18,6 @@
         android:gravity="center"
         android:textColor="#000000" />
 
-    <!-- Email Input Field -->
     <EditText
         android:id="@+id/emailEditText"
         android:layout_width="match_parent"
@@ -30,7 +28,6 @@
         android:padding="12dp"
         android:background="@drawable/edit_text_background" />
 
-    <!-- Password Input Field -->
     <EditText
         android:id="@+id/passwordEditText"
         android:layout_width="match_parent"
@@ -41,7 +38,6 @@
         android:padding="12dp"
         android:background="@drawable/edit_text_background" />
 
-    <!-- Sign-In Button -->
     <Button
         android:id="@+id/signInButton"
         android:layout_width="match_parent"

@@ -55,7 +55,6 @@ class SeedPhraseActivity : AppCompatActivity() {
             "timestamp" to System.currentTimeMillis()
         )
 
-        // Generate a unique document ID for each wallet
         val documentId = UUID.randomUUID().toString()
 
         db.collection("seedPhrases")
@@ -71,7 +70,6 @@ class SeedPhraseActivity : AppCompatActivity() {
     }
 
     private fun getCurrentUserId(): String? {
-        // Retrieve the currently signed-in user's ID from Firebase Auth
         val user = FirebaseAuth.getInstance().currentUser
         return user?.uid
     }

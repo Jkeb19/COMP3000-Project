@@ -22,11 +22,40 @@
         android:textStyle="bold"
         android:paddingBottom="8dp" />
 
-    <TextView
-        android:id="@+id/seedPhrasesTextView"
+<!--&lt;!&ndash;    <ScrollView&ndash;&gt;-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:fillViewport="true">-->
+
+        <LinearLayout
+            android:id="@+id/seedPhrasesTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Seed Phrases"
-        android:textSize="16sp" />
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/editButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit Wallet"
+            android:padding="8dp"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/deleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete Wallet"
+            android:padding="8dp"
+            android:backgroundTint="@android:color/holo_red_dark"
+            android:textColor="@android:color/white"/>
+    </LinearLayout>
 
 </LinearLayout>

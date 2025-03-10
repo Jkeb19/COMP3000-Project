@@ -7,78 +7,104 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.firestore.FirebaseFirestore
-import java.security.MessageDigest
+import com.google.firebase.FirebaseException
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthOptions
+import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.auth.PhoneMultiFactorInfo
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import java.util.concurrent.TimeUnit
 
 class SignInActivity : AppCompatActivity() {
+
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
 
-        // References to UI elements
+        auth = Firebase.auth
+
         val emailEditText = findViewById<EditText>(R.id.emailEditText)
         val passwordEditText = findViewById<EditText>(R.id.passwordEditText)
         val signInButton = findViewById<Button>(R.id.signInButton)
 
-        val db = FirebaseFirestore.getInstance()
-
-        // Set up Sign-In button click listener
         signInButton.setOnClickListener {
             val email = emailEditText.text.toString().trim()
             val password = passwordEditText.text.toString().trim()
 
-            // Validate email format
-            if (!isValidEmail(email)) {
+            if (email.isEmpty() || !isValidEmail(email)) {
                 Toast.makeText(this, "Please enter a valid email address", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            // Check if password is non-empty
             if (password.isEmpty()) {
                 Toast.makeText(this, "Please enter your password", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            // Fetch user data from Firestore
-            db.collection("users")
-                .whereEqualTo("email", email) // Match the email
-                .get()
-                .addOnSuccessListener { documents ->
-                    if (!documents.isEmpty) {
-                        val userDoc = documents.documents[0]
-                        val storedHashedPassword = userDoc.getString("password")
-
-                        if (storedHashedPassword == hashPassword(password)) {
-                            // Sign-In Successful
-                            Toast.makeText(this, "Sign-In Successful", Toast.LENGTH_SHORT).show()
-
-                            // Navigate to the next activity
-                            val intent = Intent(this, MainMenu::class.java)
-                            startActivity(intent)
-                            finish()
-                        } else {
-                            Toast.makeText(this, "Incorrect password", Toast.LENGTH_SHORT).show()
-                        }
-                    } else {
-                        Toast.makeText(this, "No account found with this email", Toast.LENGTH_SHORT).show()
-                    }
-                }
-                .addOnFailureListener { e ->
-                    Toast.makeText(this, "Error signing in: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
+            signInWithEmailAndPassword(email, password)
         }
     }
 
-    // Utility function to validate email format
-    private fun isValidEmail(email: String): Boolean {
-        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    private fun signInWithEmailAndPassword(email: String, password: String) {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    val user = auth.currentUser
+                    if (user != null) {
+                        handleMultiFactorAuthentication(user)
+                    } else {
+
+                    }
+                } else {
+
+                }
+            }
     }
 
-    // Utility function to hash passwords
-    private fun hashPassword(password: String): String {
-        val md = MessageDigest.getInstance("SHA-256")
-        val hashedBytes = md.digest(password.toByteArray(Charsets.UTF_8))
-        return hashedBytes.joinToString("") { "%02x".format(it) }
+    private fun handleMultiFactorAuthentication(user: FirebaseUser) {
+        for (factor in user.multiFactor.enrolledFactors) {
+            if (factor is PhoneMultiFactorInfo) {
+                initiateSmsVerification(factor.phoneNumber!!)
+                return
+            }
+        }
+        Toast.makeText(this, "Sign-In Successful", Toast.LENGTH_SHORT).show()
+        val intent = Intent(this, MainMenu::class.java)
+        startActivity(intent)
+        finish()
+    }
+    private fun initiateSmsVerification(phoneNumber: String) {
+        val options = PhoneAuthOptions.newBuilder(auth)
+            .setPhoneNumber(phoneNumber)
+            .setTimeout(60L, TimeUnit.SECONDS)
+            .setActivity(this)
+            .setCallbacks(object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+                }
+
+                override fun onVerificationFailed(e: FirebaseException) {
+                    Toast.makeText(this@SignInActivity, "Verification failed: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+
+                override fun onCodeSent(id: String, token: PhoneAuthProvider.ForceResendingToken) {
+                    val intent = Intent(this@SignInActivity, SmsVerificationActivity::class.java)
+                    intent.putExtra("verificationId", id)
+                    startActivity(intent)
+                    finish()
+                }
+            })
+            .build()
+        PhoneAuthProvider.verifyPhoneNumber(options)
+    }
+
+
+
+    private fun isValidEmail(email: String): Boolean {
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 }

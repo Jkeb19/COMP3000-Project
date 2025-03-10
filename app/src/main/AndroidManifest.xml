@@ -35,6 +35,24 @@
             android:exported="true"
             android:label="Sign In"
             android:theme="@style/Theme.SeedGuard"/>
+        <activity
+            android:name=".EmailVerificationActivity"
+            android:exported="true"
+            android:label="Sign In"
+            android:theme="@style/Theme.SeedGuard"/>
+
+        <activity
+            android:name=".PhoneVerificationActivity"
+            android:exported="true"
+            android:label="Sign In"
+            android:theme="@style/Theme.SeedGuard"/>
+
+        <activity
+            android:name=".SmsVerificationActivity"
+            android:exported="true"
+            android:label="Sign In"
+            android:theme="@style/Theme.SeedGuard"/>
+
 
         <activity
             android:name=".SeedPhraseActivity"
@@ -54,12 +72,12 @@
         <activity
             android:name=".ViewWalletsActivity"
             android:exported="true"
-            android:label="Add new Seed Phrase Entry"
+            android:label="View Wallets"
             android:theme="@style/Theme.SeedGuard"/>
         <activity
             android:name=".ViewSeedPhrasesActivity"
             android:exported="true"
-            android:label="Add new Seed Phrase Entry"
+            android:label="View Seed Phrases "
             android:theme="@style/Theme.SeedGuard"/>
     </application>
 

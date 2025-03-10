@@ -1,102 +1,97 @@
 package com.example.seedguard
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import java.security.MessageDigest
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
-    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var auth: FirebaseAuth
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_sign_in)
 
-        sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-
-        val db = FirebaseFirestore.getInstance()
-
+        auth = FirebaseAuth.getInstance()
 
         val nameField = findViewById<EditText>(R.id.editTextName)
         val emailField = findViewById<EditText>(R.id.editTextEmailAddress)
         val passwordField = findViewById<EditText>(R.id.editTextPassword)
         val confirmPasswordField = findViewById<EditText>(R.id.editTextConfirmPassword)
         val btnSignUp = findViewById<Button>(R.id.btnSignUp)
-        val btnSignIn =findViewById<Button>(R.id.btnSignIn)
-        val btnForgotPass = findViewById<Button>(R.id.btnForgotPW)
+        val btnSignIn = findViewById<Button>(R.id.btnSignIn)
 
         btnSignUp.setOnClickListener {
             val name = nameField.text.toString().trim()
             val email = emailField.text.toString().trim()
             val password = passwordField.text.toString().trim()
             val confirmPassword = confirmPasswordField.text.toString().trim()
+            val phoneNumber = ""
 
             if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
                 Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show()
-            } else if (password != confirmPassword) {
-                Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
-            } else if (!isValidEmail(email)) {
-                Toast.makeText(this, "Please enter a valid email address", Toast.LENGTH_SHORT).show()
-            } else {
-                // Create a user with Firebase Authentication
-                FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            // Get the generated userId from Firebase Authentication
-                            val userId = FirebaseAuth.getInstance().currentUser?.uid
-
-                            if (userId != null) {
-                                saveUserDetails(userId, name, email, password)
-                                Toast.makeText(this, "User signed up successfully!", Toast.LENGTH_SHORT).show()
-                                val intent = Intent(this, MainMenu::class.java)
-                                startActivity(intent)
-                                finish() // Close the sign-up screen
-                            } else {
-                                Toast.makeText(this, "Failed to retrieve user ID", Toast.LENGTH_SHORT).show()
-                            }
-                        } else {
-                            Toast.makeText(this, "Sign-up failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
-                        }
-                    }
+                return@setOnClickListener
             }
+
+            if (password != confirmPassword) {
+                Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (!isValidEmail(email)) {
+                Toast.makeText(this, "Please enter a valid email address", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            createAccount(email, password, name, phoneNumber)
         }
 
         btnSignIn.setOnClickListener {
             val intent = Intent(this, SignInActivity::class.java)
             startActivity(intent)
         }
-
-        btnForgotPass.setOnClickListener {  }
-
-        //autoFillCredentials()
-    }
-    private fun hashPassword(password: String): String {
-        val md = MessageDigest.getInstance("SHA-256")
-        val hashedBytes = md.digest(password.toByteArray(Charsets.UTF_8))
-        return hashedBytes.joinToString("") { "%02x".format(it) }
     }
 
+    private fun createAccount(email: String, password: String, name: String, phoneNumber: String) {
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val user = auth.currentUser
 
-    fun saveUserDetails(userId: String, name: String, email: String, password: String) {
-        val db = FirebaseFirestore.getInstance()
+                    if (user != null) {
+                        sendEmailVerification(user)
+                        saveUserDetails(user.uid, name, email, phoneNumber) // Password removed
+                    }
+                } else {
+                    Toast.makeText(this, "Sign-up failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
 
-        val hashedPassword = hashPassword(password)
+    private fun sendEmailVerification(user: com.google.firebase.auth.FirebaseUser) {
+        user.sendEmailVerification()
+            .addOnSuccessListener {
+                Toast.makeText(this, "Verification email sent. Please verify before logging in.", Toast.LENGTH_LONG).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Failed to send verification email: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
 
+    private fun saveUserDetails(userId: String, name: String, email: String, phoneNumber: String) {
         val user = hashMapOf(
             "name" to name,
             "email" to email,
-            "password" to hashedPassword,
-            "userId" to userId // Include the userId in the Firestore document
+            "userId" to userId,
+            "phoneNumber" to phoneNumber
         )
 
         db.collection("users").document(userId)
@@ -110,21 +105,7 @@ class MainActivity : ComponentActivity() {
     }
 
 
-
     private fun isValidEmail(email: String): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
-
-//    private fun autoFillCredentials() {
-//        val savedName = sharedPreferences.getString("NAME", null)
-//        val savedEmail = sharedPreferences.getString("EMAIL", null)
-//        val savedPassword = sharedPreferences.getString("PASSWORD", null)
-//
-//        if (!savedName.isNullOrEmpty() && !savedEmail.isNullOrEmpty() && !savedPassword.isNullOrEmpty()) {
-//            findViewById<EditText>(R.id.editTextName).setText(savedName)
-//            findViewById<EditText>(R.id.editTextEmailAddress).setText(savedEmail)
-//            findViewById<EditText>(R.id.editTextPassword).setText(savedPassword)
-//            findViewById<EditText>(R.id.editTextConfirmPassword).setText(savedPassword)
-//        }
-//    }
 }

@@ -24,5 +24,12 @@ class MainMenu : AppCompatActivity() {
             val intent = Intent(this, AddNewSeedPhraseActivity::class.java)
             startActivity(intent)
         }
+        val enableSmsButton: Button = findViewById(R.id.button3)
+
+        enableSmsButton.setOnClickListener {
+            val intent = Intent(this, PhoneVerificationActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 }

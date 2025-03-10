@@ -30,9 +30,6 @@ class AddNewSeedPhraseActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Navigates to SeedPhraseActivity with the provided wallet name and seed phrase count.
-     */
     private fun navigateToSeedPhraseActivity(walletName: String, seedPhraseCount: Int) {
         val intent = Intent(this, SeedPhraseActivity::class.java)
 
