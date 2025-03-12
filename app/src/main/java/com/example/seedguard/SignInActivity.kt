@@ -6,21 +6,24 @@ import android.util.Patterns
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import android.util.Log
+import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.FirebaseException
+//import androidx.media3.common.util.Log
+//import androidx.media3.common.util.UnstableApi
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthMultiFactorException
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.PhoneAuthOptions
-import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.auth.MultiFactorResolver
 import com.google.firebase.auth.PhoneMultiFactorInfo
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import java.util.concurrent.TimeUnit
 
 class SignInActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
+    private val TAG = "SignInActivity"
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,53 +58,69 @@ class SignInActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
-                    if (user != null) {
-                        handleMultiFactorAuthentication(user)
-                    } else {
-
-                    }
+                    handleMultiFactorAuthentication(user)
                 } else {
-
+                    val exception = task.exception
+                    if (exception is FirebaseAuthMultiFactorException) {
+                        val resolver = exception.resolver
+                        startMultiFactorAuthentication(resolver)
+                    } else {
+                        Toast.makeText(this, "Sign-in failed: ${exception?.message}", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
     }
 
-    private fun handleMultiFactorAuthentication(user: FirebaseUser) {
-        for (factor in user.multiFactor.enrolledFactors) {
-            if (factor is PhoneMultiFactorInfo) {
-                initiateSmsVerification(factor.phoneNumber!!)
-                return
+    private fun startMultiFactorAuthentication(resolver: MultiFactorResolver) {
+        val multiFactorHint = resolver.hints.find { it is PhoneMultiFactorInfo } as? PhoneMultiFactorInfo
+        if (multiFactorHint != null) {
+            Log.d(TAG, "Starting SMS Multi-Factor Authentication for: ${multiFactorHint.phoneNumber}")
+
+            val intent = Intent(this, SmsVerificationActivity::class.java).apply {
+                putExtra("multiFactorResolver", resolver)
+                putExtra("phoneNumber", multiFactorHint.phoneNumber)
             }
+            startActivity(intent)
+            finish()
+        } else {
+            Log.e(TAG, "No supported second factor found!")
+            Toast.makeText(this, "A supported second factor is required but not found.", Toast.LENGTH_LONG).show()
         }
-        Toast.makeText(this, "Sign-In Successful", Toast.LENGTH_SHORT).show()
-        val intent = Intent(this, MainMenu::class.java)
-        startActivity(intent)
-        finish()
-    }
-    private fun initiateSmsVerification(phoneNumber: String) {
-        val options = PhoneAuthOptions.newBuilder(auth)
-            .setPhoneNumber(phoneNumber)
-            .setTimeout(60L, TimeUnit.SECONDS)
-            .setActivity(this)
-            .setCallbacks(object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                }
-
-                override fun onVerificationFailed(e: FirebaseException) {
-                    Toast.makeText(this@SignInActivity, "Verification failed: ${e.message}", Toast.LENGTH_LONG).show()
-                }
-
-                override fun onCodeSent(id: String, token: PhoneAuthProvider.ForceResendingToken) {
-                    val intent = Intent(this@SignInActivity, SmsVerificationActivity::class.java)
-                    intent.putExtra("verificationId", id)
-                    startActivity(intent)
-                    finish()
-                }
-            })
-            .build()
-        PhoneAuthProvider.verifyPhoneNumber(options)
     }
 
+
+
+    private fun handleMultiFactorAuthentication(user: FirebaseUser?) {
+        user?.let {
+            Log.d(TAG, "User found: ${it.uid}")
+            Log.d(TAG, "Enrolled factors: ${it.multiFactor.enrolledFactors}")
+            if (it.multiFactor.enrolledFactors.isNotEmpty()) {
+                for (factor in it.multiFactor.enrolledFactors) {
+                    if (factor is PhoneMultiFactorInfo) {
+                        Log.d(TAG, "SMS factor found: ${factor.phoneNumber}")
+                        val intent = Intent(this, SmsVerificationActivity::class.java)
+                        intent.putExtra("phoneNumber", factor.phoneNumber)
+                        startActivity(intent)
+                        finish()
+                        return
+                    } else {
+                        Log.d(TAG, "Non-SMS factor found: ${factor.factorId}")
+                    }
+                }
+                Log.w(TAG, "No SMS factor found, despite enrolled factors existing")
+                Toast.makeText(this, "Sign-in requires a different multi-factor authentication method.", Toast.LENGTH_SHORT).show()
+            } else {
+                Log.d(TAG, "No multi-factor authentication enrolled")
+                Toast.makeText(this, "Sign-in successful!", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, MainMenu::class.java)
+                startActivity(intent)
+                finish()
+            }
+        } ?: run {
+            Log.w(TAG, "User is null")
+            Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show()
+        }
+    }
 
 
     private fun isValidEmail(email: String): Boolean {
