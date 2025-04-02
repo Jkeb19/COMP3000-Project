@@ -18,6 +18,7 @@ class ViewSeedPhrasesActivity : AppCompatActivity() {
     private lateinit var walletName: String
     private lateinit var seedPhrasesList: MutableList<String>
     private lateinit var seedPhrasesContainer: LinearLayout
+    private lateinit var documentId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +33,7 @@ class ViewSeedPhrasesActivity : AppCompatActivity() {
         db = FirebaseFirestore.getInstance()
         userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
+        documentId = intent.getStringExtra("DOCUMENT_ID") ?: return
         walletName = intent.getStringExtra("WALLET_NAME") ?: return
         walletNameTextView.text = "Wallet: $walletName"
 
@@ -44,25 +46,21 @@ class ViewSeedPhrasesActivity : AppCompatActivity() {
 
     private fun fetchSeedPhrases() {
         db.collection("seedPhrases")
-            .whereEqualTo("userId", userId)
-            .whereEqualTo("walletName", walletName)
-            .get(Source.SERVER)
-            .addOnSuccessListener { querySnapshot ->
-                if (querySnapshot.isEmpty) {
-                    Toast.makeText(this, "No seed phrases found.", Toast.LENGTH_SHORT).show()
+            .document(documentId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (!document.exists()) {
+                    Toast.makeText(this, "Wallet not found.", Toast.LENGTH_SHORT).show()
                     return@addOnSuccessListener
                 }
 
-                for (document in querySnapshot.documents) {
-                    seedPhrasesList = document.get("seedPhrases") as? MutableList<String> ?: mutableListOf()
-                    updateSeedPhrasesDisplay()
-                }
+                seedPhrasesList = document.get("seedPhrases") as? MutableList<String> ?: mutableListOf()
+                updateSeedPhrasesDisplay()
             }
             .addOnFailureListener { exception ->
                 Log.e("ViewSeedPhrasesActivity", "Error fetching seed phrases: ${exception.message}")
             }
     }
-
     private fun updateSeedPhrasesDisplay() {
         seedPhrasesContainer.removeAllViews()
 
@@ -121,27 +119,17 @@ class ViewSeedPhrasesActivity : AppCompatActivity() {
     }
 
     private fun updateSeedPhrases(updatedSeedPhrases: List<String>) {
-        val walletRef = db.collection("seedPhrases")
-            .whereEqualTo("userId", userId)
-            .whereEqualTo("walletName", walletName)
-
-        walletRef.get().addOnSuccessListener { querySnapshot ->
-            if (querySnapshot.isEmpty) return@addOnSuccessListener
-
-            for (document in querySnapshot.documents) {
-                val docRef = db.collection("seedPhrases").document(document.id)
-
-                docRef.update(mapOf(
-                    "seedPhrases" to updatedSeedPhrases
-                )).addOnSuccessListener {
-                    Toast.makeText(this, "Seed phrases updated!", Toast.LENGTH_SHORT).show()
-                    seedPhrasesList = updatedSeedPhrases.toMutableList()
-                    updateSeedPhrasesDisplay()
-                }.addOnFailureListener {
-                    Toast.makeText(this, "Update failed!", Toast.LENGTH_SHORT).show()
-                }
+        db.collection("seedPhrases")
+            .document(documentId)
+            .update("seedPhrases", updatedSeedPhrases)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Seed phrases updated!", Toast.LENGTH_SHORT).show()
+                seedPhrasesList = updatedSeedPhrases.toMutableList()
+                updateSeedPhrasesDisplay()
             }
-        }
+            .addOnFailureListener {
+                Toast.makeText(this, "Update failed!", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun showDeleteConfirmation() {
@@ -154,24 +142,16 @@ class ViewSeedPhrasesActivity : AppCompatActivity() {
     }
 
     private fun deleteWallet() {
-        val walletRef = db.collection("seedPhrases")
-            .whereEqualTo("userId", userId)
-            .whereEqualTo("walletName", walletName)
-
-        walletRef.get().addOnSuccessListener { querySnapshot ->
-            if (querySnapshot.isEmpty) return@addOnSuccessListener
-
-            for (document in querySnapshot.documents) {
-                db.collection("seedPhrases").document(document.id)
-                    .delete()
-                    .addOnSuccessListener {
-                        Toast.makeText(this, "Wallet deleted!", Toast.LENGTH_SHORT).show()
-                        finish()
-                    }
-                    .addOnFailureListener {
-                        Toast.makeText(this, "Failed to delete wallet.", Toast.LENGTH_SHORT).show()
-                    }
+        db.collection("seedPhrases")
+            .document(documentId)
+            .delete()
+            .addOnSuccessListener {
+                Toast.makeText(this, "Wallet deleted!", Toast.LENGTH_SHORT).show()
+                finish()
             }
-        }
+            .addOnFailureListener {
+                Toast.makeText(this, "Failed to delete wallet.", Toast.LENGTH_SHORT).show()
+            }
     }
 }
+

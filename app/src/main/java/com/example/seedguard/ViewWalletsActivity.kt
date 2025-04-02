@@ -23,7 +23,7 @@ class ViewWalletsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_saved_seedphrases)
 
-        //fetchWallets()
+
     }
 
     private fun fetchWallets() {
@@ -71,6 +71,7 @@ class ViewWalletsActivity : AppCompatActivity() {
                         text = walletName
                         setOnClickListener {
                             val intent = Intent(this@ViewWalletsActivity, ViewSeedPhrasesActivity::class.java)
+                            intent.putExtra("DOCUMENT_ID", document.id)
                             intent.putExtra("WALLET_NAME", walletName)
                             startActivity(intent)
                         }

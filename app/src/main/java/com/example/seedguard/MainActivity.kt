@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
                         saveUserDetails(user.uid, name, email, phoneNumber)
                     }
                 } else {
-                    Toast.makeText(this, "Sign-up failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Sign-up failed: An account with this email address already exists, please use another.", Toast.LENGTH_LONG).show()
                 }
             }
     }
