@@ -16,6 +16,7 @@ class SeedPhraseActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: seedphraseadapter
     private val db = FirebaseFirestore.getInstance()
+    private var isSubmitting = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,13 +33,16 @@ class SeedPhraseActivity : AppCompatActivity() {
 
         val buttonSubmit: Button = findViewById(R.id.buttonSubmitSeedPhrase)
         buttonSubmit.setOnClickListener {
+            if (isSubmitting) return@setOnClickListener
             val seedPhrases = adapter.getSeedPhrases()
 
             if (seedPhrases.any { it.isBlank() }) {
                 Toast.makeText(this, "Please fill in all seed phrases.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             } else {
                 val userId = getCurrentUserId()
                 if (userId != null) {
+                    isSubmitting = true
                     saveToDatabase(userId, walletName, seedPhrases)
                 } else {
                     Toast.makeText(this, "Error: User not signed in. Please log in again.", Toast.LENGTH_SHORT).show()
@@ -61,10 +65,12 @@ class SeedPhraseActivity : AppCompatActivity() {
             .document(documentId)
             .set(seedPhraseDocument)
             .addOnSuccessListener {
+                isSubmitting = false
                 Toast.makeText(this, "Seed phrases saved to the cloud successfully!", Toast.LENGTH_SHORT).show()
                 finish()
             }
             .addOnFailureListener { e ->
+                isSubmitting = false
                 Toast.makeText(this, "Error saving seed phrases: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
