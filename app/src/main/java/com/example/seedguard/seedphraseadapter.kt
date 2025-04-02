@@ -9,7 +9,7 @@ import com.example.seedguard.R
 
 class seedphraseadapter(private val itemCount: Int) : RecyclerView.Adapter<seedphraseadapter.SeedPhraseViewHolder>() {
 
-    private val seedPhrases = MutableList(itemCount) { "" } // Initialize the list with empty strings
+    private val seedPhrases = MutableList(itemCount) { "" }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SeedPhraseViewHolder {
         val view = LayoutInflater.from(parent.context)

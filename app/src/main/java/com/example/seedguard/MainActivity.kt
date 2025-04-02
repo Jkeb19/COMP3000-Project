@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
         val confirmPasswordField = findViewById<EditText>(R.id.editTextConfirmPassword)
         val btnSignUp = findViewById<Button>(R.id.btnSignUp)
         val btnSignIn = findViewById<Button>(R.id.btnSignIn)
+        val btnForgotPassword = findViewById<Button>(R.id.btnForgotPW)
 
         btnSignUp.setOnClickListener {
             val name = nameField.text.toString().trim()
@@ -58,6 +59,10 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, SignInActivity::class.java)
             startActivity(intent)
         }
+        btnForgotPassword.setOnClickListener {
+            val intent = Intent(this, PasswordResetActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun createAccount(email: String, password: String, name: String, phoneNumber: String) {
@@ -68,7 +73,7 @@ class MainActivity : AppCompatActivity() {
 
                     if (user != null) {
                         sendEmailVerification(user)
-                        saveUserDetails(user.uid, name, email, phoneNumber) // Password removed
+                        saveUserDetails(user.uid, name, email, phoneNumber)
                     }
                 } else {
                     Toast.makeText(this, "Sign-up failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()

@@ -15,6 +15,7 @@ class MainMenu : AppCompatActivity() {
         val viewSavedButton: Button = findViewById(R.id.button)
         val addNewButton: Button = findViewById(R.id.button2)
 
+
         viewSavedButton.setOnClickListener {
             val intent = Intent(this, ViewWalletsActivity::class.java)
             startActivity(intent)
@@ -28,6 +29,11 @@ class MainMenu : AppCompatActivity() {
 
         enableSmsButton.setOnClickListener {
             val intent = Intent(this, PhoneVerificationActivity::class.java)
+            startActivity(intent)
+        }
+        val deleteAccountButton: Button = findViewById(R.id.button4)
+        deleteAccountButton.setOnClickListener {
+            val intent = Intent(this, DeleteAccountActivity::class.java)
             startActivity(intent)
         }
 

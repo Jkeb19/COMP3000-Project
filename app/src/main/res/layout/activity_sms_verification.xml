@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center"
     android:padding="16dp">
 
     <TextView
@@ -16,6 +17,7 @@
         android:id="@+id/smsCodeEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@android:drawable/editbox_background"
         android:inputType="number"
         android:hint="Verification Code"
         android:layout_marginBottom="16dp"/>
@@ -24,6 +26,8 @@
         android:id="@+id/verifySmsButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="#050A11"
+        android:textColor="#FFFFFF"
         android:text="Verify" />
 
 </LinearLayout>

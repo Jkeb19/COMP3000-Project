@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/deleteAccountTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="Delete Account"
+        android:textColor="#2E2A2A"
+        android:textSize="24sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/deleteAccountTitle"
+        android:layout_marginTop="32dp"
+        android:text="This will permanently delete your account and all associated data."
+        android:textColor="#2E2A2A"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:padding="16dp"/>
+
+    <Button
+        android:id="@+id/deleteAccountButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Delete My Account"
+        android:backgroundTint="#FF3B30"
+        android:textColor="#FFFFFF"
+        android:elevation="4dp"/>
+
+    <Button
+        android:id="@+id/cancelButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/deleteAccountButton"
+        android:layout_marginTop="16dp"
+        android:text="Cancel"
+        android:backgroundTint="#050A11"
+        android:textColor="#FFFFFF"
+        android:elevation="4dp"/>
+
+</RelativeLayout>

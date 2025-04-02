@@ -67,6 +67,7 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.auth.ktx)
+    implementation("com.google.android.play:integrity:latest_version")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

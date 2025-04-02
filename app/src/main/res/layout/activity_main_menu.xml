@@ -1,34 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:padding="24dp">
 
     <TextView
         android:id="@+id/textView3"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
         android:text="SeedGuard"
-        android:textAlignment="center"
-        android:textColor="#090707"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textColor="#2E2A2A"
+        android:textSize="34sp"
+        android:textStyle="bold"/>
 
     <Button
         android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="View Saved Wallet Seed Phrases" />
+        android:layout_below="@id/textView3"
+        android:layout_marginTop="40dp"
+        android:text="View Saved Wallet Seed Phrases"
+        android:backgroundTint="#050A11"
+        android:textColor="#FFFFFF"
+        android:elevation="4dp"/>
 
     <Button
         android:id="@+id/button2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add New Wallet Seed Phrases" />
+        android:layout_below="@id/button"
+        android:layout_marginTop="16dp"
+        android:text="Add New Wallet Seed Phrases"
+        android:backgroundTint="#050A11"
+        android:textColor="#FFFFFF"
+        android:elevation="4dp"/>
+
     <Button
         android:id="@+id/button3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Enable SMS Verification" />
+        android:layout_below="@id/button2"
+        android:layout_marginTop="16dp"
+        android:text="Enable SMS Verification"
+        android:backgroundTint="#050A11"
+        android:textColor="#FFFFFF"
+        android:elevation="4dp"/>
 
-</LinearLayout>
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button3"
+        android:layout_marginTop="16dp"
+        android:text="Delete Account"
+        android:backgroundTint="#FF3B30"
+        android:textColor="#FFFFFF"
+        android:elevation="4dp"/>
+
+</RelativeLayout>

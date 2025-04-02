@@ -50,8 +50,15 @@
         <activity
             android:name=".SmsVerificationActivity"
             android:exported="true"
-            android:label="Sign In"
+            android:label="SMS Verification"
             android:theme="@style/Theme.SeedGuard"/>
+        <activity
+            android:name=".PasswordResetActivity"
+            android:exported="true"
+            android:label="Password Reset"
+            android:theme="@style/Theme.SeedGuard"/>
+        <activity android:name=".DeleteAccountActivity" />
+
 
 
         <activity

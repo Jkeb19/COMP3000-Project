@@ -24,7 +24,7 @@ class ViewSeedPhrasesActivity : AppCompatActivity() {
         setContentView(R.layout.activity_view_seed_phrases)
 
         val walletNameTextView = findViewById<TextView>(R.id.walletNameTextView)
-        seedPhrasesContainer = findViewById(R.id.seedPhrasesTextView) // Corrected ID
+        seedPhrasesContainer = findViewById(R.id.seedPhrasesTextView)
         val backButton: Button = findViewById(R.id.backButton)
         val editButton: Button = findViewById(R.id.editButton)
         val deleteButton: Button = findViewById(R.id.deleteButton)
@@ -106,7 +106,7 @@ class ViewSeedPhrasesActivity : AppCompatActivity() {
 
         AlertDialog.Builder(this)
             .setTitle("Edit Seed Phrases")
-            .setView(scrollView) // Use scrollable view
+            .setView(scrollView)
             .setPositiveButton("Save") { _, _ ->
                 val updatedSeedPhrases = inputFields.map { it.text.toString().trim() }
                 if (updatedSeedPhrases.any { it.isEmpty() }) {

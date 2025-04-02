@@ -1,33 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center"
+    android:background="#FFFFFF">
 
     <EditText
         android:id="@+id/phoneNumberInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:hint="Enter phone number"
-        android:inputType="phone" />
+        android:inputType="phone"
+        android:background="@android:drawable/editbox_background"
+        android:padding="16dp"
+        android:textColor="#000000"
+        android:textColorHint="#757575"/>
 
     <Button
         android:id="@+id/sendCodeButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Send Verification Code" />
+        android:layout_marginBottom="32dp"
+        android:text="Send Verification Code"
+        android:backgroundTint="#050A11"
+        android:textColor="#FFFFFF"
+        android:elevation="4dp"/>
 
     <EditText
         android:id="@+id/codeInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:hint="Enter verification code"
-        android:inputType="number" />
+        android:inputType="number"
+        android:background="@android:drawable/editbox_background"
+        android:padding="16dp"
+        android:textColor="#000000"
+        android:textColorHint="#757575"/>
 
     <Button
         android:id="@+id/verifyCodeButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Verify Code" />
+        android:text="Verify Code"
+        android:backgroundTint="#050A11"
+        android:textColor="#FFFFFF"
+        android:elevation="4dp"/>
 
 </LinearLayout>

@@ -9,9 +9,10 @@
         android:id="@+id/backButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Back"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="sans-serif"
         android:padding="8dp"
-        android:layout_marginBottom="16dp" />
+        android:text="Back" />
 
     <TextView
         android:id="@+id/walletNameTextView"
@@ -22,10 +23,6 @@
         android:textStyle="bold"
         android:paddingBottom="8dp" />
 
-<!--&lt;!&ndash;    <ScrollView&ndash;&gt;-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:fillViewport="true">-->
 
         <LinearLayout
             android:id="@+id/seedPhrasesTextView"
@@ -44,18 +41,24 @@
             android:id="@+id/editButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Edit Wallet"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="@color/black"
+            android:fontFamily="sans-serif"
             android:padding="8dp"
-            android:layout_marginEnd="8dp" />
+            android:text="Edit Wallet"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/deleteButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Delete Wallet"
-            android:padding="8dp"
             android:backgroundTint="@android:color/holo_red_dark"
-            android:textColor="@android:color/white"/>
+            android:fontFamily="sans-serif"
+            android:padding="8dp"
+            android:text="Delete Wallet"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
     </LinearLayout>
 
 </LinearLayout>

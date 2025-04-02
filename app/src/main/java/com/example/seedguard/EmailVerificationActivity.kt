@@ -21,12 +21,9 @@ class EmailVerificationActivity : AppCompatActivity() {
         auth = Firebase.auth
         val currentUser = auth.currentUser
 
-        val emailTextView = findViewById<TextView>(R.id.emailTextView)
+        //val emailTextView = findViewById<TextView>(R.id.emailTextView)
         val resendButton = findViewById<Button>(R.id.resendButton)
 
-        if (currentUser != null) {
-            emailTextView.text = "Please verify your email: ${currentUser.email}"
-        }
 
         resendButton.setOnClickListener {
             currentUser?.sendEmailVerification()?.addOnCompleteListener { task ->

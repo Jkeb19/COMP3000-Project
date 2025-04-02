@@ -1,45 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:padding="24dp">
 
     <TextView
         android:id="@+id/textView4"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Enter name of Wallet" />
+        android:text="Enter name of Wallet"
+        android:textColor="#2E2A2A"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"/>
 
     <EditText
         android:id="@+id/editTextText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="text"
-        android:text="Wallet" />
+        android:layout_below="@id/textView4"
+        android:hint="Wallet"
+        android:background="@android:drawable/editbox_background"
+        android:padding="16dp"
+        android:textColor="#000000"
+        android:textColorHint="#757575"/>
 
     <TextView
         android:id="@+id/textView6"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="How many words are in the Seed Phrase?" />
+        android:layout_below="@id/editTextText"
+        android:layout_marginTop="32dp"
+        android:text="How many words are in the Seed Phrase?"
+        android:textColor="#2E2A2A"
+        android:textSize="16sp"/>
 
     <Button
         android:id="@+id/button4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="12" />
+        android:layout_below="@id/textView6"
+        android:layout_marginTop="16dp"
+        android:text="12"
+        android:backgroundTint="#050A11"
+        android:textColor="#FFFFFF"
+        android:elevation="4dp"/>
 
     <Button
         android:id="@+id/button5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="18" />
+        android:layout_below="@id/button4"
+        android:layout_marginTop="16dp"
+        android:text="18"
+        android:backgroundTint="#050A11"
+        android:textColor="#FFFFFF"
+        android:elevation="4dp"/>
 
     <Button
         android:id="@+id/button6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="24" />
+        android:layout_below="@id/button5"
+        android:layout_marginTop="16dp"
+        android:text="24"
+        android:backgroundTint="#050A11"
+        android:textColor="#FFFFFF"
+        android:elevation="4dp"/>
 
-</LinearLayout>
+</RelativeLayout>
