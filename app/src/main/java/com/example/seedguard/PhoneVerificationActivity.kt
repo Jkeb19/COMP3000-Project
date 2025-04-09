@@ -71,10 +71,18 @@ class PhoneVerificationActivity : AppCompatActivity() {
     }
 
     private fun sendVerificationCode(phoneNumber: String) {
+        val session = multiFactorSession
+        if (session == null) {
+            Log.e(TAG, "MultiFactorSession is null")
+            Toast.makeText(this, "Verification session not available", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val options = PhoneAuthOptions.newBuilder(auth)
             .setPhoneNumber(phoneNumber)
             .setTimeout(60L, TimeUnit.SECONDS)
             .setActivity(this)
+            .setMultiFactorSession(session)
             .setCallbacks(object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                 override fun onVerificationCompleted(credential: PhoneAuthCredential) {
                     Log.d(TAG, "Verification completed automatically")
@@ -97,20 +105,24 @@ class PhoneVerificationActivity : AppCompatActivity() {
     }
 
     private fun verifyCode(code: String) {
-        val credential = PhoneAuthProvider.getCredential(verificationId, code)
-        enrollPhoneNumberAsMFA(credential)
+        try {
+            val credential = PhoneAuthProvider.getCredential(verificationId, code)
+            enrollPhoneNumberAsMFA(credential)
+        } catch (e: Exception) {
+            Log.e(TAG, "Verification failed: ${e.message}")
+            Toast.makeText(this, "Verification failed: ${e.message}", Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun enrollPhoneNumberAsMFA(credential: PhoneAuthCredential) {
         val user = auth.currentUser
-        if (user != null && multiFactorSession != null) {
+        if (user != null) {
             val phoneAssertion = PhoneMultiFactorGenerator.getAssertion(credential)
 
             user.multiFactor.enroll(phoneAssertion, "Phone MFA")
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Toast.makeText(this, "Phone number enrolled for MFA!", Toast.LENGTH_SHORT).show()
-                        savePhoneNumberToDatabase(user.uid, phoneNumberInput.text.toString())
                         finish()
                     } else {
                         Log.e(TAG, "MFA enrollment failed: ${task.exception?.message}")
@@ -118,19 +130,8 @@ class PhoneVerificationActivity : AppCompatActivity() {
                     }
                 }
         } else {
-            Toast.makeText(this, "MFA session not available!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "User not signed in!", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun savePhoneNumberToDatabase(userId: String, phoneNumber: String) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection("users").document(userId)
-            .update("phoneNumber", phoneNumber)
-            .addOnSuccessListener {
-                Log.d("Firestore", "Phone number saved successfully!")
-            }
-            .addOnFailureListener { e ->
-                Log.e("Firestore", "Error saving phone number", e)
-            }
-    }
 }
