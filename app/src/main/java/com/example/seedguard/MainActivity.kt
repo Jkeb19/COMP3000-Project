@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity() {
             val email = emailField.text.toString().trim()
             val password = passwordField.text.toString().trim()
             val confirmPassword = confirmPasswordField.text.toString().trim()
-            val phoneNumber = ""
 
             if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
                 Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show()
@@ -52,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            createAccount(email, password, name, phoneNumber)
+            createAccount(email, password, name)
         }
 
         btnSignIn.setOnClickListener {
@@ -65,7 +64,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun createAccount(email: String, password: String, name: String, phoneNumber: String) {
+    private fun createAccount(email: String, password: String, name: String) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -73,7 +72,7 @@ class MainActivity : AppCompatActivity() {
 
                     if (user != null) {
                         sendEmailVerification(user)
-                        saveUserDetails(user.uid, name, email, phoneNumber)
+                        saveUserDetails(user.uid, name, email)
                     }
                 } else {
                     Toast.makeText(this, "Sign-up failed: An account with this email address already exists, please use another.", Toast.LENGTH_LONG).show()
@@ -91,12 +90,11 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    private fun saveUserDetails(userId: String, name: String, email: String, phoneNumber: String) {
+    private fun saveUserDetails(userId: String, name: String, email: String) {
         val user = hashMapOf(
             "name" to name,
             "email" to email,
-            "userId" to userId,
-            "phoneNumber" to phoneNumber
+            "userId" to userId
         )
 
         db.collection("users").document(userId)
