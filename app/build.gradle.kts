@@ -54,7 +54,6 @@ android {
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.8.0"))
 
-    //implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -67,6 +66,9 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.auth.ktx)
+    implementation("com.google.firebase:firebase-auth:22.3.1")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation("com.google.android.gms:play-services-safetynet:18.0.1")
     implementation("com.google.android.play:integrity:latest_version")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
