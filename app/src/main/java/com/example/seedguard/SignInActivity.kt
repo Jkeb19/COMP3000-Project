@@ -58,7 +58,16 @@ class SignInActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
-                    handleMultiFactorAuthentication(user)
+                    if (user != null && !user.isEmailVerified) {
+                        Log.d(TAG, "Email not verified for user: ${user.uid}")
+                        Toast.makeText(this, "Please verify your email first", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this, EmailVerificationActivity::class.java).apply {
+                        }
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        handleMultiFactorAuthentication(user)
+                    }
                 } else {
                     val exception = task.exception
                     if (exception is FirebaseAuthMultiFactorException) {
@@ -107,8 +116,7 @@ class SignInActivity : AppCompatActivity() {
                         Log.d(TAG, "Non-SMS factor found: ${factor.factorId}")
                     }
                 }
-                Log.w(TAG, "No SMS factor found, despite enrolled factors existing")
-                Toast.makeText(this, "Sign-in requires a different multi-factor authentication method.", Toast.LENGTH_SHORT).show()
+
             } else {
                 Log.d(TAG, "No multi-factor authentication enrolled")
                 Toast.makeText(this, "Sign-in successful!", Toast.LENGTH_SHORT).show()
