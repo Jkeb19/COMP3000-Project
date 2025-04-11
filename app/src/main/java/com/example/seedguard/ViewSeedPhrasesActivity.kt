@@ -96,6 +96,7 @@ class ViewSeedPhrasesActivity : AppCompatActivity() {
             editText.filters = arrayOf(InputFilter { source, _, _, _, _, _ ->
                 if (source.matches(Regex("^[a-z]+$"))) source else ""
             })
+            editText.background = getDrawable(android.R.drawable.editbox_background)
             layout.addView(editText)
             inputFields.add(editText)
         }
