@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+
             if (!isValidEmail(email)) {
                 Toast.makeText(this, "Please enter a valid email address", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener

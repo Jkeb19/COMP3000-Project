@@ -1,4 +1,5 @@
 import android.text.Editable
+import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
@@ -32,6 +33,9 @@ class seedphraseadapter(private val itemCount: Int) : RecyclerView.Adapter<seedp
 
         fun bind(position: Int) {
             editText.hint = "Word ${position + 1}"
+            editText.filters = arrayOf(InputFilter { source, _, _, _, _, _ ->
+                if (source.matches(Regex("^[a-z]+$"))) source else ""
+            })
             editText.setText(seedPhrases[position])
             editText.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}

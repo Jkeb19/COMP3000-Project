@@ -19,7 +19,9 @@
         android:layout_height="wrap_content"
         android:background="@android:drawable/editbox_background"
         android:inputType="number"
-        android:hint="Verification Code"
+        android:digits="0123456789"
+        android:hint="Enter 6-digit code"
+        android:maxLength="6"
         android:layout_marginBottom="16dp"/>
 
     <Button

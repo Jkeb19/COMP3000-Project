@@ -32,19 +32,30 @@ class PhoneVerificationActivity : AppCompatActivity() {
         codeInput = findViewById(R.id.codeInput)
         sendCodeButton = findViewById(R.id.sendCodeButton)
         verifyCodeButton = findViewById(R.id.verifyCodeButton)
+        verifyCodeButton.isEnabled = false
+
 
         sendCodeButton.setOnClickListener {
             val phoneNumber = phoneNumberInput.text.toString().trim()
-            if (phoneNumber.isNotEmpty()) {
-                requestMultiFactorEnrollment(phoneNumber)
-            } else {
-                Toast.makeText(this, "Enter a valid phone number", Toast.LENGTH_SHORT).show()
+            when {
+                phoneNumber.isEmpty() -> {
+                    Toast.makeText(this, "Please enter a phone number", Toast.LENGTH_SHORT).show()
+                }
+                !phoneNumber.startsWith("+") -> {
+                    Toast.makeText(this, "Please include country code (e.g., +44)", Toast.LENGTH_LONG).show()
+                }
+                phoneNumber.length < 10 -> {
+                    Toast.makeText(this, "Phone number too short", Toast.LENGTH_SHORT).show()
+                }
+                else -> {
+                    requestMultiFactorEnrollment(phoneNumber)
+                }
             }
         }
 
         verifyCodeButton.setOnClickListener {
             val code = codeInput.text.toString().trim()
-            if (code.isNotEmpty()) {
+            if (code.length == 6) {
                 verifyCode(code)
             } else {
                 Toast.makeText(this, "Enter the verification code", Toast.LENGTH_SHORT).show()
@@ -66,7 +77,7 @@ class PhoneVerificationActivity : AppCompatActivity() {
                     }
                 }
         } else {
-            Toast.makeText(this, "User not signed in!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "User not signed in, please login again", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -74,9 +85,10 @@ class PhoneVerificationActivity : AppCompatActivity() {
         val session = multiFactorSession
         if (session == null) {
             Log.e(TAG, "MultiFactorSession is null")
-            Toast.makeText(this, "Verification session not available", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Verification Failed", Toast.LENGTH_SHORT).show()
             return
         }
+        sendCodeButton.isEnabled = false
 
         val options = PhoneAuthOptions.newBuilder(auth)
             .setPhoneNumber(phoneNumber)
@@ -85,12 +97,13 @@ class PhoneVerificationActivity : AppCompatActivity() {
             .setMultiFactorSession(session)
             .setCallbacks(object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                 override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                    Log.d(TAG, "Verification completed automatically")
+                    Log.d(TAG, "Verification completed")
                     enrollPhoneNumberAsMFA(credential)
                 }
 
                 override fun onVerificationFailed(e: FirebaseException) {
                     Log.e(TAG, "Verification failed: ${e.message}", e)
+                    sendCodeButton.isEnabled = true
                     Toast.makeText(this@PhoneVerificationActivity, "Verification failed: ${e.message}", Toast.LENGTH_LONG).show()
                 }
 
@@ -106,10 +119,12 @@ class PhoneVerificationActivity : AppCompatActivity() {
 
     private fun verifyCode(code: String) {
         try {
+            verifyCodeButton.isEnabled = false
             val credential = PhoneAuthProvider.getCredential(verificationId, code)
             enrollPhoneNumberAsMFA(credential)
         } catch (e: Exception) {
             Log.e(TAG, "Verification failed: ${e.message}")
+            verifyCodeButton.isEnabled = true
             Toast.makeText(this, "Verification failed: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
@@ -122,15 +137,16 @@ class PhoneVerificationActivity : AppCompatActivity() {
             user.multiFactor.enroll(phoneAssertion, "Phone MFA")
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Toast.makeText(this, "Phone number enrolled for MFA!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Phone number enrolled for MFA", Toast.LENGTH_SHORT).show()
                         finish()
                     } else {
+                        verifyCodeButton.isEnabled = true
                         Log.e(TAG, "MFA enrollment failed: ${task.exception?.message}")
                         Toast.makeText(this, "MFA enrollment failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
                     }
                 }
         } else {
-            Toast.makeText(this, "User not signed in!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "User not signed in, please login again", Toast.LENGTH_LONG).show()
         }
     }
 
